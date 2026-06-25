@@ -1,0 +1,9 @@
+{
+  "name": "orders-service",
+  "version": "1.0.0",
+  "description": "Orders microservice",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "auth-service",
+  "version": "1.0.0",
+  "description": "Auth microservice",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  }
+}
