@@ -1,0 +1,28 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 374862008657.dkr.ecr.us-east-1.amazonaws.com
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-7)
+
+  build:
+    commands:
+      - echo Building Docker image...
+      - cd auth-service
+      - docker build -t auth-service .
+      - docker tag auth-service:latest 374862008657.dkr.ecr.us-east-1.amazonaws.com/auth-service:$IMAGE_TAG
+      - docker tag auth-service:latest 374862008657.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+
+  post_build:
+    commands:
+      - echo Pushing image to ECR...
+      - docker push 374862008657.dkr.ecr.us-east-1.amazonaws.com/auth-service:$IMAGE_TAG
+      - docker push 374862008657.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"auth-service","imageUri":"374862008657.dkr.ecr.us-east-1.amazonaws.com/auth-service:%s"}]' $IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
